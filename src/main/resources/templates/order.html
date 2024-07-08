@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>주문 내역</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding-top: 20px;
+        }
+
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header a {
+            text-decoration: none;
+            color: white;
+            margin-left: 10px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .main {
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        .filter {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .filter input, .filter button {
+            margin: 0 10px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .filter button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .filter button:hover {
+            background-color: #45a049;
+        }
+
+        .reset-button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .reset-button:hover {
+            background-color: darkred;
+        }
+
+        span {
+            margin-right: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <a href="/">C-ON</a>
+        <div>
+            <span th:if="${session.cno != null}" th:text="${name} + 님"></span>
+            <a th:if="${session.cno != null}" href="/customer/logout">로그아웃</a>
+            <a th:if="${session.cno != null}" href="/cart">장바구니</a>
+        </div>
+    </div>
+    <div class="main">
+        <h2>주문 내역</h2>
+        <div class="filter">
+            <form action="/orders/search" method="post">
+                <label for="startDate">기간:</label>
+                <input type="date" id="startDate" name="startDate" th:value="${default != null ? default.getStartDate() : ''}">
+                <label for="endDate">~</label>
+                <input type="date" id="endDate" name="endDate" th:value="${default != null ? default.getEndDate() : ''}">
+                <button type="submit">검색</button>
+            </form>
+            <button class="reset-button" onclick="location.href='/orders'">초기화</button>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                <tr>
+                    <th>주문일</th>
+                    <th>메뉴</th>
+                    <th>수량</th>
+                    <th>총 결제 금액</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="order : ${orderDetailList}">
+                    <td th:text="${#strings.replace(order.orderDate, 'T', ' ')}"></td>
+                    <td>
+                        <table style="width: 100%; border: none;">
+                            <tr th:each="food, iterStat : ${order.food}">
+                                <td th:text="${food.foodName}" style="border: none;"></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                        <table style="width: 100%; border: none;">
+                            <tr th:each="quantity, iterStat : ${order.quantity}">
+                                <td th:text="${quantity}" style="border: none;"></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td th:text="${#numbers.formatDecimal(order.totalPrice(), 0, 'COMMA', 0, 'POINT')} + ' 원'"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
