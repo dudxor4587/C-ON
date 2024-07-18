@@ -17,7 +17,6 @@ public class AdminService {
     private final CustomerRepository customerRepository;
 
     // 관리자 페이지에서 회원 별 주문 횟수와 주문 금액을 조회하는 메소드
-    // 쿼리에서 받은 결과를 CustomerOrderResponse로 변환
     @Transactional
     public List<CustomerOrderResponse> getCustomerOrderList() {
         List<Object[]> results = customerRepository.findMemberOrderStats();

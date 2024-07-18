@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AdminController {
     private final AdminService adminService;
 
+    // 어드민 계정으로 로그인하면 관리자 페이지로 이동
     @GetMapping
     public String getAdmin(Model model) {
         model.addAttribute("foodList", adminService.getFoodList());
